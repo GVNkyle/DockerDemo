@@ -1,0 +1,33 @@
+<c-card class="mb-4">
+    <c-card-body>
+        <form cForm>
+            <div class="mb-3">
+                <label cLabel for="exampleFormControlInput1">Shipping address</label>
+                <input cFormControl [(ngModel)]="address.addressLine1" id="address" name="address"
+                    placeholder="Shipping address" type="text" />
+            </div>
+            <div class="mb-3">
+                <label cLabel for="exampleFormControlTextarea1">City</label>
+                <input cFormControl id="City" [(ngModel)]="address.city" placeholder="City" name="City" type="text" />
+            </div>
+            <div class="mb-3">
+                <label cLabel for="exampleFormControlTextarea1">State</label>
+                <input cFormControl id="State" [(ngModel)]="address.stateProvince" placeholder="State" name="State"
+                    type="text" />
+            </div>
+            <div class="mb-3">
+                <label cLabel for="exampleFormControlTextarea1">Post Code</label>
+                <input cFormControl id="PostCode" [(ngModel)]="address.postalCode" placeholder="Post Code"
+                    name="PostCode" type="text" />
+            </div>
+            <div class="mb-3">
+                <label cLabel for="exampleFormControlTextarea1">Country</label>
+                <input cFormControl id="Country" [(ngModel)]="address.countryRegion" placeholder="Country"
+                    name="Country" type="text" />
+            </div>
+        </form>
+    </c-card-body>
+    <c-card-footer>
+        <button cButton class="float-end" (click)="onSubmit()" [color]="'success'">Save</button>
+    </c-card-footer>
+</c-card>

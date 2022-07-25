@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  api:
+    container_name: docker-demo-api
+    build:
+      context: ./API
+    image: docker-demo-api:prod
+    ports:
+      - "7000:6000"
+    # volumes:
+    #   - "./API:/home/app"
+
+  spa:
+    container_name: docker-demo-spa
+    build:
+      context: ./SPA
+    image: docker-demo-spa:prod
+    ports:
+      - "5000:80"   #prod
+      # - "3000:4200" #dev
+    # volumes:
+    #   - "./SPA/src:/app/src"

@@ -1,0 +1,1 @@
+If you looking for DB, it's AdventureWorksLT2019 sample DB for MSSQL
