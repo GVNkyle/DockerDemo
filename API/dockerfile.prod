@@ -1,0 +1,21 @@
+FROM mcr.microsoft.com/dotnet/sdk:6.0-alpine as build
+
+WORKDIR /home/app
+
+COPY API.csproj .
+
+RUN dotnet restore API.csproj
+
+COPY . .
+
+RUN dotnet publish API.csproj -o /publish/
+
+FROM mcr.microsoft.com/dotnet/aspnet:6.0-alpine as deploy
+
+WORKDIR /publish
+
+COPY --from=build /publish .
+
+ENV ASPNETCORE_URLS="http://+:5000"
+
+ENTRYPOINT ["dotnet", "API.dll"]

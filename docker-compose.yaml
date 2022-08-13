@@ -4,19 +4,23 @@ services:
     container_name: docker-demo-api
     build:
       context: ./API
-    image: docker-demo-api:prod
+      # dockerfile: dockerfile.prod #trỏ tới dockerfile
+      # target: build               #trỏ tới stage trong dockerfile
+      # mặc định ko khai báo sẽ tự lấy dockerfile và build
+    image: docker-demo-api:dev
     ports:
-      - "7000:6000"
-    # volumes:
-    #   - "./API:/home/app"
+      - "7000:5000"
+    volumes:
+      - "./API:/home/app"
 
   spa:
     container_name: docker-demo-spa
     build:
       context: ./SPA
-    image: docker-demo-spa:prod
+      # tương tự ở trên
+    image: docker-demo-spa:dev
     ports:
-      - "5000:80"   #prod
-      # - "3000:4200" #dev
-    # volumes:
-    #   - "./SPA/src:/app/src"
+      # - "5000:80"   #prod
+      - "8000:4200" #dev
+    volumes:
+      - "./SPA/src:/app/src"

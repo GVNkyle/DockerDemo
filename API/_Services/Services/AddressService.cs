@@ -39,7 +39,7 @@ namespace API._Services.Services
 
         public async Task<PaginationUtility<AddressDTO>> SearchData(PaginationParam pagination)
         {
-            var data = await _repositoryAccessor.AddressRepository.FindAll().OrderByDescending(x => x.ModifiedDate).Project().To<AddressDTO>().AsNoTracking().ToListAsync();
+            var data = await _repositoryAccessor.AddressRepository.FindAll().Project().To<AddressDTO>().AsNoTracking().ToListAsync();
             return PaginationUtility<AddressDTO>.Create(data, pagination.PageNumber, pagination.PageSize, false);
         }
 

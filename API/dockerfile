@@ -1,15 +1,18 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0-alpine as build 
+
+#install debugger for NET Core
+RUN apk update
+RUN apk add
+RUN curl -sSL https://aka.ms/getvsdbgsh | /bin/sh /dev/stdin -v latest -l /vsdbg
+
 WORKDIR /home/app
 COPY DockerDemo.csproj .
 RUN dotnet restore DockerDemo.csproj --disable-parallel
 COPY . .
-RUN dotnet publish DockerDemo.csproj -o /publish/
-
-FROM mcr.microsoft.com/dotnet/aspnet:6.0-alpine as deploy
-WORKDIR /publish
-COPY --from=build /publish .
+# RUN dotnet publish DockerDemo.csproj -o /publish/
 # https://www.abhith.net/blog/docker-sql-error-on-aspnet-core-alpine/
 RUN apk add icu-libs
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
-ENV ASPNETCORE_URLS="http://+:6000"
-ENTRYPOINT ["dotnet", "DockerDemo.dll"]
+RUN dotnet dev-certs https
+ENV ASPNETCORE_URLS="http://0.0.0.0:5000"
+CMD dotnet watch run --no-hot-reload
