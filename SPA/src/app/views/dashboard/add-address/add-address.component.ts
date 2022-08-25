@@ -1,8 +1,7 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { NgxSmartModalService } from 'ngx-smart-modal';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { AddressDTO } from 'src/app/_core/models/addressDto';
-import { AddressService } from 'src/app/_core/services/address.service';
+import { BsModalRef } from 'ngx-bootstrap/modal';
+import { OperationResult } from '../../../_core/helpers/utilities/operation-result';
 
 @Component({
   selector: 'app-add-address',
@@ -11,20 +10,17 @@ import { AddressService } from 'src/app/_core/services/address.service';
 })
 export class AddAddressComponent implements OnInit {
   address: AddressDTO = <AddressDTO>{};
-  temp: AddressDTO = <AddressDTO>{};
-
-  constructor(private addressService: AddressService, private spinner: NgxSpinnerService, public ngxSmartModalService: NgxSmartModalService) { }
+  type: boolean;
+  @Output() addressOutput = new EventEmitter();
+  constructor(public bsModalRef: BsModalRef) { }
 
   ngOnInit(): void {
-    this.temp = this.ngxSmartModalService.getModalData('myModal');
-    this.ngxSmartModalService.resetModalData('myModal');
-    if (this.temp) this.address = { ...this.temp };
+    this.type = this.address.addressID > 0;
   }
 
   onSubmit() {
-    let check = this.temp === undefined ? true : false;
-    this.ngxSmartModalService.get('myModal').onDismiss.emit({ isSuccess: check, data: this.address, error: null });
-    this.ngxSmartModalService.get('myModal').close();
+    this.addressOutput.emit(<OperationResult>{ data: this.address, isSuccess: this.type })
+    this.bsModalRef.hide();
   }
 
 }

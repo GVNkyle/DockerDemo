@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { ConfirmBoxEvokeService, ToastEvokeService } from '@costlydeveloper/ngx-awesome-popup';
-import { NgxSmartModalService } from 'ngx-smart-modal';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { catchError, firstValueFrom, of, tap } from 'rxjs';
+import { OperationResult } from 'src/app/_core/helpers/utilities/operation-result';
 import { Pagination } from 'src/app/_core/helpers/utilities/pagination-utility';
 import { AddressDTO } from 'src/app/_core/models/addressDto';
-
+import { NgxNotiflixService } from 'src/app/_core/services/ngx-notiflix.service';
 import { AddressService } from '../../../_core/services/address.service'
 import { AddAddressComponent } from '../add-address/add-address.component';
 
@@ -21,9 +20,8 @@ export class DashboardComponent implements OnInit {
     pageNumber: 1,
     pageSize: 10
   };
-
-  constructor(private addressService: AddressService, private spinner: NgxSpinnerService, public ngxSmartModalService: NgxSmartModalService, private toastEvokeService: ToastEvokeService, private confirmBoxEvokeService: ConfirmBoxEvokeService) {
-    this.ngxSmartModalService.create('myModal', AddAddressComponent);
+  bsModalRef?: BsModalRef;
+  constructor(private addressService: AddressService, private notiflixService: NgxNotiflixService, private modalService: BsModalService) {
   }
 
   ngOnInit(): void {
@@ -36,16 +34,16 @@ export class DashboardComponent implements OnInit {
   }
 
   getData() {
-    this.spinner.show();
+    this.notiflixService.showLoading();
     this.addressService.getSearchData(this.pagination).subscribe({
       next: (res) => {
         this.addressList = res.result;
         this.pagination = res.pagination;
-        this.spinner.hide();
+        this.notiflixService.hideLoading();
       },
       error: (err) => {
         console.log(err);
-        this.spinner.hide();
+        this.notiflixService.hideLoading();
       }
     })
   }
@@ -56,64 +54,81 @@ export class DashboardComponent implements OnInit {
 
 
   async openEditModal(address: AddressDTO) {
-    this.ngxSmartModalService.setModalData(address, 'myModal');
-    this.ngxSmartModalService.getModal('myModal').open();
-    let data = await firstValueFrom(this.ngxSmartModalService.get('myModal').onDismiss);
-    await firstValueFrom(this.addressService.update(data.data).pipe(
-      tap((res) => {
-        if (res.isSuccess) {
-          this.toastEvokeService.success('Success', 'Update Successfully').subscribe();
-          this.search();
-        }
-        else {
-          this.toastEvokeService.danger('Error', 'Update Failed').subscribe();
-        }
-      }),
-      catchError((err) => {
-        this.toastEvokeService.danger('Error', 'Something error here').subscribe();
-        return of(null);
-      })
-    ));
+    const initialState: ModalOptions = {
+      class: 'modal-lg',
+      initialState: {
+        address : address
+      }
+    };
+    this.bsModalRef = this.modalService.show(AddAddressComponent, initialState);
+    this.bsModalRef.content.addressOutput.subscribe(async (response: OperationResult) => {
+      if (response.isSuccess) {
+        await firstValueFrom(this.addressService.update(response.data).pipe(
+          tap((res) => {
+            if (res.isSuccess) {
+              this.notiflixService.success('Update Successfully');
+              this.search();
+            }
+            else {
+              this.notiflixService.error('Update Failed');
+            }
+          }),
+          catchError((err) => {
+            this.notiflixService.error('Something error here');
+            return of(null);
+          })
+        ));
+      } else {
+        this.notiflixService.error("Something error here");
+      }
+    })
   }
 
   async openAddModal() {
-    this.ngxSmartModalService.getModal('myModal').open();
-    let data = await firstValueFrom(this.ngxSmartModalService.get('myModal').onDismiss);
-    await firstValueFrom(this.addressService.addNew(data.data).pipe(
-      tap((res) => {
-        if (res.isSuccess) {
-          this.toastEvokeService.success('Success', 'Add Successfully').subscribe();
-          this.search();
-        }
-        else {
-          this.toastEvokeService.danger('Error', 'Add Failed').subscribe();
-        }
-      }),
-      catchError((err) => {
-        this.toastEvokeService.danger('Error', 'Something error here').subscribe();
-        return of(null);
-      })
-    ));
+    const initialState: ModalOptions = {
+      class: 'modal-lg',
+    };
+    this.bsModalRef = this.modalService.show(AddAddressComponent, initialState);
+    this.bsModalRef.content.addressOutput.subscribe(async (response: OperationResult) => {
+      if (!response.isSuccess) {
+        await firstValueFrom(this.addressService.addNew(response.data).pipe(
+          tap((res) => {
+            if (res.isSuccess) {
+              this.notiflixService.success('Add Successfully');
+              this.search();
+            }
+            else {
+              this.notiflixService.error('Add Failed');
+            }
+          }),
+          catchError((err) => {
+            this.notiflixService.error('Something error here');
+            return of(null);
+          })
+        ));
+      } else {
+        this.notiflixService.error("Something error here");
+      }
+    })
   }
 
   async deleteItem(item: AddressDTO) {
-    let check = await firstValueFrom(this.confirmBoxEvokeService.warning('Warning!', 'Are you sure you want to delete this record!', 'Confirm', 'Decline'));
-    if (check.success) {
+    this.notiflixService.confirm('Warning!', 'Are you sure you want to delete this record?', async () => {
       await firstValueFrom(this.addressService.delete(item.addressID).pipe(
         tap((res) => {
           if (res.isSuccess) {
-            this.toastEvokeService.success('Success', 'Delete Successfully').subscribe();
+            this.notiflixService.success('Delete Successfully');
             this.search();
           }
           else {
-            this.toastEvokeService.danger('Error', 'Delete Failed').subscribe();
+            this.notiflixService.error('Delete Failed');
           }
         }),
         catchError((err) => {
-          this.toastEvokeService.danger('Error', 'Something error here').subscribe();
+          this.notiflixService.error('Something error here');
           return of(null);
         })
       ))
-    }
+    })
   }
 }

@@ -15,12 +15,11 @@ import {
   TabsModule
 } from '@coreui/angular';
 import { IconModule } from '@coreui/icons-angular';
-import { ChartjsModule } from '@coreui/angular-chartjs';
-
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { DashboardComponent } from './list-address/dashboard.component';
-import { NgxSmartModalModule } from 'ngx-smart-modal';
 import { AddAddressComponent } from './add-address/add-address.component';
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { MaskDirective } from '../../_core/directives/mask.directive';
 
 @NgModule({
   imports: [
@@ -38,11 +37,10 @@ import { AddAddressComponent } from './add-address/add-address.component';
     FormModule,
     ButtonModule,
     ButtonGroupModule,
-    ChartjsModule,
     AvatarModule,
     TableModule,
     NgxPaginationModule,
-    NgxSmartModalModule.forRoot()
+    ModalModule.forRoot(),
   ],
   declarations: [DashboardComponent, AddAddressComponent]
 })

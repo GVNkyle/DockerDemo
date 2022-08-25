@@ -36,12 +36,15 @@
             ],
             "styles": [
               "src/scss/styles.scss",
-              "node_modules/ngx-spinner/animations/ball-scale-multiple.css"
+              "node_modules/notiflix/dist/notiflix-3.2.5.min.css"
             ],
-            "scripts": [],
+            "scripts": [
+              "node_modules/notiflix/dist/notiflix-3.2.5.min.js"
+            ],
             "allowedCommonJsDependencies": [
               "chart.js",
-              "@coreui/chartjs/dist/js/coreui-chartjs.js"
+              "@coreui/chartjs/dist/js/coreui-chartjs.js",
+              "notiflix"
             ]
           },
           "configurations": {

@@ -28,13 +28,6 @@ import {
   DefaultLayoutComponent,
 } from './containers';
 
-// Import from library
-import {
-  NgxAwesomePopupModule,
-  DialogConfigModule,
-  ConfirmBoxConfigModule,
-  ToastNotificationConfigModule
-} from '@costlydeveloper/ngx-awesome-popup';
 
 import {
   AvatarModule,
@@ -58,7 +51,6 @@ import {
 } from '@coreui/angular';
 
 import { IconModule, IconSetService } from '@coreui/icons-angular';
-import { NgxSpinnerModule } from "ngx-spinner";
 
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
@@ -101,13 +93,6 @@ const APP_CONTAINERS = [
     BadgeModule,
     ListGroupModule,
     CardModule,
-    NgxSpinnerModule,
-    /* ---------------------------------------- awesome-popup --------------------------------------- */
-    NgxAwesomePopupModule.forRoot(), // Essential, mandatory main module.
-    DialogConfigModule.forRoot(), // Needed for instantiating dynamic components.
-    ConfirmBoxConfigModule.forRoot(), // Needed for instantiating confirm boxes.
-    ToastNotificationConfigModule.forRoot() // Needed for instantiating toast notifications.
-    /* -------------------------------------- end-awesome-popup ------------------------------------- */
   ],
   providers: [
     {

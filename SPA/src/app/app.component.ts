@@ -1,17 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd, RouterEvent, NavigationStart, NavigationCancel, NavigationError } from '@angular/router';
-
+import { NgxNotiflixService } from './_core/services/ngx-notiflix.service';
 import { IconSetService } from '@coreui/icons-angular';
 import { iconSubset } from './icons/icon-subset';
 import { Title } from '@angular/platform-browser';
-import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'body',
-  template: `<router-outlet></router-outlet>
-             <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" template="<img style='width: 96px; height: 96px' src='../assets/img/spinner.gif' />" type="ball-scale-multiple" [fullScreen]="true">
-</ngx-spinner>`,
+  template: `<router-outlet></router-outlet>`,
 })
 export class AppComponent implements OnInit {
   title = 'CoreUI Free Angular Admin Template';
@@ -20,7 +17,7 @@ export class AppComponent implements OnInit {
     private router: Router,
     private titleService: Title,
     private iconSetService: IconSetService,
-    private spinnerService: NgxSpinnerService
+    private notiflixService: NgxNotiflixService
   ) {
     titleService.setTitle(this.title);
     // iconSet singleton
@@ -33,15 +30,22 @@ export class AppComponent implements OnInit {
         return;
       }
     });
+
+    //custom notiflix
+    this.notiflixService.init({
+      loadingSvgUrl: 'assets/img/loading.svg',
+      loadingType: 'custom',
+      okButton: 'Okie',
+    });
   }
 
   navigationInterceptor(e: RouterEvent) {
     if (e instanceof NavigationStart) {
-      this.spinnerService.show();
+      this.notiflixService.showLoading();
     }
 
     if (e instanceof NavigationEnd || e instanceof NavigationCancel || e instanceof NavigationError) {
-      this.spinnerService.hide();
+      this.notiflixService.hideLoading();
     }
   }
 }
